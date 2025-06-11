@@ -142,6 +142,8 @@ border :: proc(id: clay.ElementId, style: Border_Style) {
 
 status_bar :: proc(id: string, items: []string, text_config: clay.TextElementConfig) {
     status_bar_id := clay.ID(id)
+    text_config := text_config
+    text_config.wrapMode = .None
     if clay.UI()({
         id = status_bar_id,
         layout = {
@@ -157,6 +159,9 @@ status_bar :: proc(id: string, items: []string, text_config: clay.TextElementCon
             childGap = 1,
         },
         backgroundColor = COLOR_SURFACE,
+        clip = {
+            horizontal = true,
+        }
     }){
         for item, i in items {
             item_id := clay.ID_LOCAL(fmt.tprintf("%s_child_%d", id, i))
