@@ -27,7 +27,19 @@ Border_Style :: enum {
     Sunken,
 }
 
-button :: proc(id: clay.ElementId, $label: string, mouse_down: bool, text_config: clay.TextElementConfig) -> bool {
+// This map is used to track button state between frames for debounce. This is required to
+// enable the button borders to respond visually to being held without rapid firing events.
+@(private)
+button_state: map[clay.ElementId]bool
+
+@(private, init)
+init_button_state_map :: proc() {
+    button_state = make(map[clay.ElementId]bool)
+}
+
+button :: proc(id: clay.ElementId, $label: string, mouse_down: bool, text_config: clay.TextElementConfig) -> (clicked: bool) {
+    prev_down := button_state[id] or_else false
+
     if clay.UI()({
         id = id,
         layout = {
@@ -46,9 +58,11 @@ button :: proc(id: clay.ElementId, $label: string, mouse_down: bool, text_config
         },
         backgroundColor = COLOR_SURFACE,
     }){
-        clicked := clay.Hovered() && mouse_down
+        current_down := clay.Hovered() && mouse_down
         clay.Text(label, clay.TextConfig(text_config))
-        border(id.id, clicked ? .Sunken : .Raised)
+        border(id, current_down ? .Sunken : .Raised)
+        clicked = prev_down && !current_down && clay.Hovered()
+        button_state[id] = current_down
     }
 
     return clicked
