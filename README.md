@@ -2,4 +2,4 @@ Grayve is a component library for [clay](https://github.com/nicbarker/clay) (usi
 
 This library is still in very early development and the name sucks. Everything is subject to change as I have no idea what I'm doing.
 
-![screenshot.png]
+![screenshot](screenshot.png)
